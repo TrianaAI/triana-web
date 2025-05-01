@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/utils/utils.dart';
 
 class IdentityForm extends StatefulWidget {
@@ -20,11 +21,27 @@ class _IdentityFormState extends State<IdentityForm> {
   final _bodyTemperatureController = TextEditingController();
   bool _isLoading = false;
   bool? _isMale;
+  String? _selectedCountry;
+
+  // List of countries for the dropdown
+  final List<String> _countries = [
+    'Select Country',
+    'USA',
+    'Canada',
+    'UK',
+    'India',
+    'Australia',
+    'Germany',
+    'France',
+    'Japan',
+    'Brazil',
+  ];
 
   @override
   Widget build(BuildContext context) {
     const labelWidth = 120.0; // Fixed width for all labels
     const labelStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+    const fieldPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
     return Scaffold(
       body: Form(
@@ -148,7 +165,7 @@ class _IdentityFormState extends State<IdentityForm> {
                       children: [
                         SizedBox(
                           width: labelWidth,
-                          child: Text('Gender:', style: labelStyle),
+                          child: Text('Sex:', style: labelStyle),
                         ),
                         spacerWidth(20),
                         Radio<bool>(
@@ -218,26 +235,53 @@ class _IdentityFormState extends State<IdentityForm> {
                 ),
               ],
             ),
+            spacerHeight(20),
+            _buildCountryDropdown(
+              label: 'Country:',
+              labelWidth: labelWidth,
+              labelStyle: labelStyle,
+              fieldPadding: fieldPadding,
+              validator: (value) {
+                if (value == null ||
+                    value.isEmpty ||
+                    value == 'Select Country') {
+                  return 'Please select your country';
+                }
+                return null;
+              },
+            ),
             spacerHeight(30),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 140.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Colors.blue,
+                  ),
+                  onPressed: () {
+                    Modular.to.pushNamed('/front_counter/chat');
+                    // if (_formKey.currentState?.validate() ?? false) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(
+                    //       content: Text('Form submitted successfully'),
+                    //     ),
+                    //   );
+                    // }
+                  },
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Form submitted successfully'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Submit', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
@@ -255,7 +299,7 @@ class _IdentityFormState extends State<IdentityForm> {
     String? Function(String?)? validator,
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(width: labelWidth, child: Text(label, style: labelStyle)),
         spacerWidth(20),
@@ -277,6 +321,53 @@ class _IdentityFormState extends State<IdentityForm> {
                 borderSide: const BorderSide(color: Colors.blue, width: 2.0),
               ),
             ),
+            validator: validator,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCountryDropdown({
+    required String label,
+    required double labelWidth,
+    required TextStyle labelStyle,
+    required EdgeInsets fieldPadding,
+    required String? Function(String?)? validator,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(width: labelWidth, child: Text(label, style: labelStyle)),
+        spacerWidth(20),
+        SizedBox(
+          width: 300,
+          child: DropdownButtonFormField<String>(
+            value: _selectedCountry,
+            decoration: InputDecoration(
+              contentPadding: fieldPadding,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+              ),
+            ),
+            hint: const Text('Select Country'),
+            items:
+                _countries.map((String country) {
+                  return DropdownMenuItem<String>(
+                    value: country,
+                    child: Text(country),
+                  );
+                }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedCountry = newValue;
+              });
+            },
             validator: validator,
           ),
         ),
