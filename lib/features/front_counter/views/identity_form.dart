@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:triana_web/features/front_counter/models/form.dart';
+import 'package:triana_web/utils/country_list.dart';
+import 'package:triana_web/utils/mqtt.dart';
 import 'package:triana_web/utils/utils.dart';
 
 class IdentityForm extends StatefulWidget {
@@ -10,6 +15,7 @@ class IdentityForm extends StatefulWidget {
 }
 
 class _IdentityFormState extends State<IdentityForm> {
+  final mqttService = MqttService();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -23,19 +29,38 @@ class _IdentityFormState extends State<IdentityForm> {
   bool? _isMale;
   String? _selectedCountry;
 
-  // List of countries for the dropdown
-  final List<String> _countries = [
-    'Select Country',
-    'USA',
-    'Canada',
-    'UK',
-    'India',
-    'Australia',
-    'Germany',
-    'France',
-    'Japan',
-    'Brazil',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _connectMqtt();
+  }
+
+  Future<void> _connectMqtt() async {
+    Future.delayed(const Duration(seconds: 1), () {
+      LoadingOverlay.hide();
+    });
+    LoadingOverlay.show(
+      context,
+      Center(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+    mqttService.connect().then((_) {
+      if (mqttService.client.connectionStatus?.state ==
+          MqttConnectionState.connected) {
+        print('MQTT client connected');
+      } else {
+        print(
+          'MQTT client connection failed - status: ${mqttService.client.connectionStatus}',
+        );
+        mqttService.client.disconnect();
+      }
+    });
+    LoadingOverlay.hide();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +112,10 @@ class _IdentityFormState extends State<IdentityForm> {
               labelStyle: labelStyle,
               hint: '+1234567890',
               controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')),
+              ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your phone number';
@@ -106,6 +135,14 @@ class _IdentityFormState extends State<IdentityForm> {
                     labelStyle: labelStyle,
                     hint: '70 kg',
                     controller: _weightController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                          r'^\d*\.?\d*$',
+                        ), // Allow numbers with optional decimal point
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your weight';
@@ -124,6 +161,14 @@ class _IdentityFormState extends State<IdentityForm> {
                     labelStyle: labelStyle,
                     hint: '175 cm',
                     controller: _heightController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                          r'^\d*\.?\d*$',
+                        ), // Allow numbers with optional decimal point
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your height';
@@ -146,6 +191,12 @@ class _IdentityFormState extends State<IdentityForm> {
                     labelStyle: labelStyle,
                     hint: '25',
                     controller: _ageController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*$'), // Allow only digits
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your age';
@@ -205,6 +256,14 @@ class _IdentityFormState extends State<IdentityForm> {
                     labelStyle: labelStyle,
                     hint: '75 bpm',
                     controller: _heartRateController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                          r'^\d*\.?\d*$',
+                        ), // Allow numbers with optional decimal point
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your heart rate';
@@ -213,6 +272,44 @@ class _IdentityFormState extends State<IdentityForm> {
                       }
                       return null;
                     },
+                    onTap: () {
+                      LoadingOverlay.show(
+                        context,
+                        GestureDetector(
+                          onTap: () {
+                            LoadingOverlay.hide();
+                          },
+                          child: Container(
+                            width: 400,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: const Center(
+                              child: Text(
+                                'Put your finger on the sensor below',
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                      mqttService.subscribe('triana/device/1/bloodrate');
+                      mqttService.publish(
+                        'triana/device/1/bloodrate',
+                        'Hello from Flutter!',
+                      );
+                      // Custom onTap logic for Heart Rate
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     content: Text(
+                      //       'Heart Rate is connected to IoT device',
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    readOnly: true, // Make the field non-editable
                   ),
                 ),
                 spacerWidth(20),
@@ -223,6 +320,14 @@ class _IdentityFormState extends State<IdentityForm> {
                     labelStyle: labelStyle,
                     hint: '37.5 °C',
                     controller: _bodyTemperatureController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                          r'^\d*\.?\d*$',
+                        ), // Allow numbers with optional decimal point
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your body temperature';
@@ -231,13 +336,46 @@ class _IdentityFormState extends State<IdentityForm> {
                       }
                       return null;
                     },
+                    onTap: () {
+                      LoadingOverlay.show(
+                        context,
+                        GestureDetector(
+                          onTap: () {
+                            LoadingOverlay.hide();
+                          },
+                          child: Container(
+                            width: 400,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: const Center(
+                              child: Text(
+                                'Put your finger on the sensor below',
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                      // Custom onTap logic for Body Temperature
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     content: Text(
+                      //       'Body Temperature is connected to IoT device',
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    readOnly: true, // Make the field non-editable
                   ),
                 ),
               ],
             ),
             spacerHeight(20),
             _buildCountryDropdown(
-              label: 'Country:',
+              label: 'Nationality:',
               labelWidth: labelWidth,
               labelStyle: labelStyle,
               fieldPadding: fieldPadding,
@@ -264,13 +402,41 @@ class _IdentityFormState extends State<IdentityForm> {
                     backgroundColor: Colors.blue,
                   ),
                   onPressed: () {
-                    Modular.to.pushNamed('/front_counter/chat');
+                    // Modular.to.pushNamed('/front_counter/chat');
+                    final dummyIdentityForm = IdentityFormModel(
+                      name: 'John Doe',
+                      email: 'sdfa@jfdsl.com',
+                      phoneNumber: '+1234567890',
+                      weight: 70.0,
+                      height: 175.0,
+                      age: 25,
+                      heartRate: 75.0,
+                      bodyTemperature: 37.5,
+                      isMale: true,
+                      nationality: 'USA',
+                    );
+                    showOtpDialog(context, dummyIdentityForm);
                     // if (_formKey.currentState?.validate() ?? false) {
                     //   ScaffoldMessenger.of(context).showSnackBar(
                     //     const SnackBar(
                     //       content: Text('Form submitted successfully'),
                     //     ),
                     //   );
+                    //   // final identityForm = IdentityFormModel(
+                    //   //   name: _nameController.text,
+                    //   //   email: _emailController.text,
+                    //   //   phoneNumber: _phoneController.text,
+                    //   //   weight: double.parse(_weightController.text),
+                    //   //   height: double.parse(_heightController.text),
+                    //   //   age: int.parse(_ageController.text),
+                    //   //   heartRate: double.parse(_heartRateController.text),
+                    //   //   bodyTemperature: double.parse(
+                    //   //     _bodyTemperatureController.text,
+                    //   //   ),
+                    //   //   isMale: _isMale!,
+                    //   //   nationality: _selectedCountry!,
+                    //   // );
+                    //   // showOtpDialog(context, identityForm);
                     // }
                   },
                   child: const Text(
@@ -294,9 +460,13 @@ class _IdentityFormState extends State<IdentityForm> {
     required String label,
     required double labelWidth,
     required TextStyle labelStyle,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
     required TextEditingController controller,
     String? Function(String?)? validator,
+    VoidCallback? onTap,
+    bool readOnly = false,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -306,12 +476,17 @@ class _IdentityFormState extends State<IdentityForm> {
         Expanded(
           child: TextFormField(
             controller: controller,
+            // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hint,
+              hintStyle: const TextStyle(color: Colors.grey),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
               ),
+
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: const BorderSide(color: Colors.blue, width: 1.5),
@@ -322,6 +497,8 @@ class _IdentityFormState extends State<IdentityForm> {
               ),
             ),
             validator: validator,
+            onTap: onTap,
+            readOnly: readOnly,
           ),
         ),
       ],
@@ -341,7 +518,7 @@ class _IdentityFormState extends State<IdentityForm> {
         SizedBox(width: labelWidth, child: Text(label, style: labelStyle)),
         spacerWidth(20),
         SizedBox(
-          width: 300,
+          width: 500,
           child: DropdownButtonFormField<String>(
             value: _selectedCountry,
             decoration: InputDecoration(
@@ -355,9 +532,9 @@ class _IdentityFormState extends State<IdentityForm> {
                 borderSide: const BorderSide(color: Colors.blue, width: 2.0),
               ),
             ),
-            hint: const Text('Select Country'),
+            hint: const Text('Select Nationality'),
             items:
-                _countries.map((String country) {
+                countries.map((String country) {
                   return DropdownMenuItem<String>(
                     value: country,
                     child: Text(country),

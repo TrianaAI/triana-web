@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:triana_web/features/front_counter/models/form.dart';
 
 SizedBox spacerHeight(double height) {
   return SizedBox(height: height);
@@ -8,7 +10,7 @@ SizedBox spacerWidth(double width) {
   return SizedBox(width: width);
 }
 
-void showOtpDialog(BuildContext context) {
+void showOtpDialog(BuildContext context, IdentityFormModel identityForm) {
   final TextEditingController otpController = TextEditingController();
 
   showDialog(
@@ -36,7 +38,12 @@ void showOtpDialog(BuildContext context) {
             onPressed: () {
               final otp = otpController.text;
               // Handle OTP submission logic here
-              Navigator.of(context).pop(); // Close the dialog
+              // Navigator.of(context).pop(); // Close the dialog
+              Modular.to.pop(); // Close the dialog
+              Modular.to.pushNamed(
+                '/front_counter/chat',
+                arguments: identityForm,
+              ); // Pass OTP to the next screen
             },
             child: const Text('Submit'),
           ),
@@ -44,4 +51,39 @@ void showOtpDialog(BuildContext context) {
       );
     },
   );
+}
+
+class LoadingOverlay {
+  static OverlayEntry? _overlayEntry;
+
+  static void show(BuildContext context, Widget child) {
+    if (_overlayEntry != null) return; // Prevent multiple overlays
+
+    _overlayEntry = OverlayEntry(
+      builder:
+          (context) => Scaffold(
+            backgroundColor: Colors.black54,
+            body: GestureDetector(
+              onTap: hide, // Hide the overlay when tapped
+              child: Center(child: child),
+            ),
+          ),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final overlay = Overlay.of(context);
+      if (overlay != null) {
+        overlay.insert(_overlayEntry!);
+      }
+    });
+  }
+
+  static void hide() {
+    if (_overlayEntry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      });
+    }
+  }
 }
