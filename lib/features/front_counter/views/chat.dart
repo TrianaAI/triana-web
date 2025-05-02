@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:triana_web/features/front_counter/models/form.dart';
 
 class ChatView extends StatefulWidget {
-  const ChatView({super.key});
+  final IdentityFormModel? identityForm;
+  const ChatView({super.key, this.identityForm});
 
   @override
   State<ChatView> createState() => _ChatViewState();
 }
 
 class _ChatViewState extends State<ChatView> {
+  final _messageController = TextEditingController();
   final List<Map<String, String>> messages = [
     {'sender': 'User', 'message': 'Hello!'},
     {'sender': 'Bot', 'message': 'Hi there! How can I help you today?'},
@@ -18,6 +21,15 @@ class _ChatViewState extends State<ChatView> {
           'Sure, I can help with that. Could you please provide more details?',
     },
   ];
+
+  void _sendMessage() {
+    if (_messageController.text.isNotEmpty) {
+      setState(() {
+        messages.add({'sender': 'User', 'message': _messageController.text});
+        _messageController.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +75,15 @@ class _ChatViewState extends State<ChatView> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: _messageController,
+                    onSubmitted: (value) {
+                      _sendMessage();
+                      _messageController
+                          .clear(); // Clear the text field after sending
+                    },
                     decoration: const InputDecoration(
                       hintText: 'Type a message',
+                      hintStyle: TextStyle(color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
@@ -75,7 +94,9 @@ class _ChatViewState extends State<ChatView> {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
-                    // Handle send action
+                    _sendMessage();
+                    _messageController
+                        .clear(); // Clear the text field after sending
                   },
                 ),
               ],

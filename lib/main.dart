@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/routes/routes.dart';
+// import 'package:triana_web/utils/mqtt.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // final mqttService = MqttService();
+  // await mqttService.connect();
+
+  // mqttService.subscribe('triana/device/1/bloodrate');
+
+  // mqttService.publish('triana/device/1/bloodrate', 'Hello from Flutter!');
+
   runApp(ModularApp(module: MainRoutes(), child: const MainApp()));
 }
 
