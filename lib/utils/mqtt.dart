@@ -8,10 +8,10 @@ class MqttService {
 
   Future<void> connect() async {
     if (kIsWeb) {
-      client = MqttBrowserClient(
-        'wss://broker.emqx.io:8083/mqtt',
-        'flutter_client',
-      );
+      client = MqttBrowserClient('wss://broker.emqx.io/mqtt', '');
+      // client.setProtocolV311();
+      client.websocketProtocols = ['mqtt'];
+      client.port = 8084;
     } else {
       client = MqttServerClient('broker.emqx.io', 'flutter_client');
       client.port = 1883;
@@ -22,9 +22,12 @@ class MqttService {
     client.onDisconnected = onDisconnected;
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
+    // client.websocketProtocols = MqttClientConstants.protocolsSingleDefault;
 
     final connMessage = MqttConnectMessage()
-        .withClientIdentifier('flutter_client')
+        .withClientIdentifier(
+          'flutter_client_${DateTime.now().millisecondsSinceEpoch}',
+        )
         .startClean()
         .withWillQos(MqttQos.atLeastOnce);
     client.connectionMessage = connMessage;
