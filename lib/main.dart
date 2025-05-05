@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
+import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
 // import 'package:triana_web/utils/mqtt.dart';
 
@@ -30,6 +31,7 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ChatCubit()),
         BlocProvider(create: (context) => IdentityFormCubit()),
+        BlocProvider(create: (context) => QueueCubit()),
       ],
       child: MaterialApp.router(
         title: 'Triana',

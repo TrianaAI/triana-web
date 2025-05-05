@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
 import 'package:triana_web/utils/country_list.dart';
 import 'package:triana_web/utils/mqtt.dart';
@@ -26,6 +26,7 @@ class _IdentityFormState extends State<IdentityForm> {
   final _ageController = TextEditingController();
   final _heartRateController = TextEditingController();
   final _bodyTemperatureController = TextEditingController();
+  DateTime? _dateOfBirth;
   bool _isLoading = false;
   bool? _isMale;
   String? _selectedCountry;
@@ -271,6 +272,117 @@ class _IdentityFormState extends State<IdentityForm> {
                   ),
                   spacerHeight(20),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: labelWidth,
+                        child: Text('Date of Birth:', style: labelStyle),
+                      ),
+                      spacerWidth(20),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            final selectedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                            );
+                            if (selectedDate != null) {
+                              setState(() {
+                                _dateOfBirth = selectedDate;
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.blue,
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(
+                              _dateOfBirth == null
+                                  ? 'Select Date'
+                                  : '${_dateOfBirth!.day}/${_dateOfBirth!.month}/${_dateOfBirth!.year}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color:
+                                    _dateOfBirth == null
+                                        ? Colors.grey
+                                        : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      spacerWidth(20),
+                      SizedBox(
+                        width: labelWidth,
+                        child: Text('Nationality:', style: labelStyle),
+                      ),
+                      spacerWidth(20),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedCountry,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.blue,
+                                width: 1.5,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.blue,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          hint: const Text(
+                            'Select Nationality',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          items:
+                              countries.map((String country) {
+                                return DropdownMenuItem<String>(
+                                  value: country,
+                                  child: Text(
+                                    country,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedCountry = newValue;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == 'Select Country') {
+                              return 'Please select your country';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  spacerHeight(20),
+                  Row(
                     children: [
                       Expanded(
                         child: _buildLabeledField(
@@ -396,21 +508,21 @@ class _IdentityFormState extends State<IdentityForm> {
                       ),
                     ],
                   ),
-                  spacerHeight(20),
-                  _buildCountryDropdown(
-                    label: 'Nationality:',
-                    labelWidth: labelWidth,
-                    labelStyle: labelStyle,
-                    fieldPadding: fieldPadding,
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          value == 'Select Country') {
-                        return 'Please select your country';
-                      }
-                      return null;
-                    },
-                  ),
+                  // spacerHeight(20),
+                  // _buildCountryDropdown(
+                  //   label: 'Nationality:',
+                  //   labelWidth: labelWidth,
+                  //   labelStyle: labelStyle,
+                  //   fieldPadding: fieldPadding,
+                  //   validator: (value) {
+                  //     if (value == null ||
+                  //         value.isEmpty ||
+                  //         value == 'Select Country') {
+                  //       return 'Please select your country';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   spacerHeight(30),
                   SizedBox(
                     width: double.infinity,
@@ -420,7 +532,18 @@ class _IdentityFormState extends State<IdentityForm> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          side: const BorderSide(
+                            color: Colors.blue,
+                            width: 2.0,
+                          ),
+                          elevation: 10,
+                          shadowColor: Colors.blue.withOpacity(0.5),
+                          
+                          textStyle: const TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w500,
                           ),
                           backgroundColor: Colors.blue,
                         ),
@@ -450,7 +573,7 @@ class _IdentityFormState extends State<IdentityForm> {
                         child: const Text(
                           'Submit',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 26,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),
@@ -529,35 +652,37 @@ class _IdentityFormState extends State<IdentityForm> {
       children: [
         SizedBox(width: labelWidth, child: Text(label, style: labelStyle)),
         spacerWidth(20),
-        SizedBox(
-          width: 500,
-          child: DropdownButtonFormField<String>(
-            value: _selectedCountry,
-            decoration: InputDecoration(
-              contentPadding: fieldPadding,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+        Expanded(
+          child: SizedBox(
+            // width: 500,
+            child: DropdownButtonFormField<String>(
+              value: _selectedCountry,
+              decoration: InputDecoration(
+                contentPadding: fieldPadding,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+                ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-              ),
+              hint: const Text('Select Nationality'),
+              items:
+                  countries.map((String country) {
+                    return DropdownMenuItem<String>(
+                      value: country,
+                      child: Text(country),
+                    );
+                  }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedCountry = newValue;
+                });
+              },
+              validator: validator,
             ),
-            hint: const Text('Select Nationality'),
-            items:
-                countries.map((String country) {
-                  return DropdownMenuItem<String>(
-                    value: country,
-                    child: Text(country),
-                  );
-                }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedCountry = newValue;
-              });
-            },
-            validator: validator,
           ),
         ),
       ],
