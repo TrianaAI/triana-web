@@ -8,5 +8,6 @@ class FrontCounterModule extends Module {
       '/chat',
       child: (_) => ChatView(identityForm: r.args.data as IdentityFormModel),
     );
+    r.child('/queue', child: (_) => const QueueNumber());
   }
 }

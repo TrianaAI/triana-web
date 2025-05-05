@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
+import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
+import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
 // import 'package:triana_web/utils/mqtt.dart';
 
@@ -23,14 +27,21 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Modular.setInitialRoute('/front_counter');
     // Modular.setInitialRoute('/home');
-    return MaterialApp.router(
-      title: 'Triana',
-      routeInformationParser: Modular.routeInformationParser,
-      routerDelegate: Modular.routerDelegate,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ChatCubit()),
+        BlocProvider(create: (context) => IdentityFormCubit()),
+        BlocProvider(create: (context) => QueueCubit()),
+      ],
+      child: MaterialApp.router(
+        title: 'Triana',
+        routeInformationParser: Modular.routeInformationParser,
+        routerDelegate: Modular.routerDelegate,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
       ),
     );
   }
