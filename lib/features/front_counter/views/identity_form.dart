@@ -20,10 +20,10 @@ class _IdentityFormState extends State<IdentityForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  // final _phoneController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
-  final _ageController = TextEditingController();
+  // final _ageController = TextEditingController();
   final _heartRateController = TextEditingController();
   final _bodyTemperatureController = TextEditingController();
   DateTime? _dateOfBirth;
@@ -127,28 +127,28 @@ class _IdentityFormState extends State<IdentityForm> {
                       return null;
                     },
                   ),
-                  spacerHeight(20),
-                  _buildLabeledField(
-                    label: 'Phone:',
-                    labelWidth: labelWidth,
-                    labelStyle: labelStyle,
-                    hint: '+1234567890',
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      } else if (!RegExp(
-                        r'^\+?[0-9]{10,15}$',
-                      ).hasMatch(value)) {
-                        return 'Please enter a valid phone number';
-                      }
-                      return null;
-                    },
-                  ),
+                  // spacerHeight(20),
+                  // _buildLabeledField(
+                  //   label: 'Phone:',
+                  //   labelWidth: labelWidth,
+                  //   labelStyle: labelStyle,
+                  //   hint: '+1234567890',
+                  //   controller: _phoneController,
+                  //   keyboardType: TextInputType.phone,
+                  //   inputFormatters: [
+                  //     FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')),
+                  //   ],
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please enter your phone number';
+                  //     } else if (!RegExp(
+                  //       r'^\+?[0-9]{10,15}$',
+                  //     ).hasMatch(value)) {
+                  //       return 'Please enter a valid phone number';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   spacerHeight(20),
                   Row(
                     children: [
@@ -205,71 +205,7 @@ class _IdentityFormState extends State<IdentityForm> {
                       ),
                     ],
                   ),
-                  spacerHeight(20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildLabeledField(
-                          label: 'Age:',
-                          labelWidth: labelWidth,
-                          labelStyle: labelStyle,
-                          hint: '25',
-                          controller: _ageController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d*$'), // Allow only digits
-                            ),
-                          ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your age';
-                            } else if (int.tryParse(value) == null) {
-                              return 'Please enter a valid age';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      spacerWidth(20),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: labelWidth,
-                                child: Text('Sex:', style: labelStyle),
-                              ),
-                              spacerWidth(20),
-                              Radio<bool>(
-                                value: true,
-                                groupValue: _isMale,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isMale = value;
-                                  });
-                                },
-                              ),
-                              const Text('Male'),
-                              spacerWidth(20),
-                              Radio<bool>(
-                                value: false,
-                                groupValue: _isMale,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isMale = value;
-                                  });
-                                },
-                              ),
-                              const Text('Female'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+
                   spacerHeight(20),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -523,6 +459,41 @@ class _IdentityFormState extends State<IdentityForm> {
                   //     return null;
                   //   },
                   // ),
+                  spacerHeight(20),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: labelWidth,
+                          child: Text('Sex:', style: labelStyle),
+                        ),
+                        spacerWidth(20),
+                        Radio<bool>(
+                          value: true,
+                          groupValue: _isMale,
+                          onChanged: (value) {
+                            setState(() {
+                              _isMale = value;
+                            });
+                          },
+                        ),
+                        const Text('Male'),
+                        spacerWidth(20),
+                        Radio<bool>(
+                          value: false,
+                          groupValue: _isMale,
+                          onChanged: (value) {
+                            setState(() {
+                              _isMale = value;
+                            });
+                          },
+                        ),
+                        const Text('Female'),
+                      ],
+                    ),
+                  ),
                   spacerHeight(30),
                   SizedBox(
                     width: double.infinity,
@@ -540,7 +511,7 @@ class _IdentityFormState extends State<IdentityForm> {
                           ),
                           elevation: 10,
                           shadowColor: Colors.blue.withOpacity(0.5),
-                          
+
                           textStyle: const TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w500,
@@ -548,27 +519,49 @@ class _IdentityFormState extends State<IdentityForm> {
                           backgroundColor: Colors.blue,
                         ),
                         onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            final identityForm = IdentityFormModel(
-                              name: _nameController.text,
-                              email: _emailController.text,
-                              phoneNumber: _phoneController.text,
-                              weight: double.parse(_weightController.text),
-                              height: double.parse(_heightController.text),
-                              age: int.parse(_ageController.text),
-                              heartRate: double.parse(
-                                _heartRateController.text,
-                              ),
-                              bodyTemperature: double.parse(
-                                _bodyTemperatureController.text,
-                              ),
-                              isMale: _isMale!,
-                              nationality: _selectedCountry!,
-                            );
-                            context.read()<IdentityFormCubit>().submitForm(
-                              identityForm,
-                            );
-                          }
+                          // if (_formKey.currentState?.validate() ?? false) {
+                          //   final identityForm = IdentityFormModel(
+                          //     name: _nameController.text,
+                          //     email: _emailController.text,
+                          //     phoneNumber: _phoneController.text,
+                          //     weight: double.parse(_weightController.text),
+                          //     height: double.parse(_heightController.text),
+                          //     age: int.parse(_ageController.text),
+                          //     heartRate: double.parse(
+                          //       _heartRateController.text,
+                          //     ),
+                          //     bodyTemperature: double.parse(
+                          //       _bodyTemperatureController.text,
+                          //     ),
+                          //     isMale: _isMale!,
+                          //     nationality: _selectedCountry!,
+                          //   );
+                          //   context.read()<IdentityFormCubit>().submitForm(
+                          //     identityForm,
+                          //   );
+                          // }
+
+                          final dummyIdentityForm = IdentityFormModel(
+                            name: 'John Doe',
+                            email: 'john@mail.com',
+                            weight: 70.0,
+                            height: 175.0,
+                            heartRate: 75.0,
+                            bodyTemperature: 37.5,
+                            isMale: true,
+                            nationality: 'USA',
+                            dateOfBirth: DateTime(1998, 1, 1),
+                          );
+                          // context.read<IdentityFormCubit>().submitForm(
+                          //   dummyIdentityForm,
+                          // );
+                          BlocProvider.of<IdentityFormCubit>(
+                            context,
+                          ).submitForm(dummyIdentityForm, context);
+                          // Modular.to.pushNamed(
+                          //   '/front_counter/chat',
+                          //   arguments: dummyIdentityForm,
+                          // );
                         },
                         child: const Text(
                           'Submit',
