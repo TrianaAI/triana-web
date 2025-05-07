@@ -18,12 +18,15 @@ ENV FLUTTER_VERSION=3.29.3-stable
 ENV FLUTTER_HOME=/usr/local/flutter
 ENV PATH="$FLUTTER_HOME/bin:$PATH"
 
+# Download and extract Flutter, configure safe directory, then run doctor
 RUN curl -SL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}.tar.xz \
-    | tar -xJ -C /usr/local/ && \
-    flutter config --no-analytics && \
-    flutter doctor -v
+    | tar -xJ -C /usr/local/ \
+    && git config --global --add safe.directory /usr/local/flutter \
+    && flutter config --no-analytics \
+    && flutter doctor -v
 
-# Copy application files and get dependencies\WORKDIR /app
+# Copy application files and get dependencies
+WORKDIR /app
 COPY pubspec.* ./
 RUN flutter pub get
 
