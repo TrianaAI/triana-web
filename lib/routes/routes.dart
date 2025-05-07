@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
 import 'package:triana_web/features/front_counter/views/chat.dart';
 import 'package:triana_web/features/front_counter/views/identity_form.dart';
+import 'package:triana_web/features/front_counter/views/queue.dart';
 
 import 'package:triana_web/features/doctor/views/diagnosis.dart';
 import 'package:triana_web/features/doctor/views/home.dart';
