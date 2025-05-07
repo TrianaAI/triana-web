@@ -29,8 +29,49 @@ class MainApp extends StatelessWidget {
       routerDelegate: Modular.routerDelegate,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        scaffoldBackgroundColor: Color(0xFFF6F8FA),
+        primaryColor: Colors.black,
+        colorScheme: ColorScheme.light(
+          primary: Colors.black,
+          secondary: Colors.grey,
+          onPrimary: Colors.white,
+          onSecondary: Colors.black,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFFF6F8FA),
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          bodySmall: TextStyle(color: Colors.black),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+          ),
+          labelStyle: TextStyle(color: Colors.blue),
+          hintStyle: TextStyle(color: Colors.grey),
+        ),
       ),
     );
   }
