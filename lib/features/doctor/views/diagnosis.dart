@@ -12,6 +12,23 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
 
   int queueNumber = 19;
 
+  final List<Map<String, String>> records = [
+    {
+      'date': '2025-05-01',
+      'weight': '70 kg',
+      'height': '175 cm',
+      'heartRate': '72 bpm',
+      'temperature': '36.6°C',
+    },
+    {
+      'date': '2025-04-01',
+      'weight': '69 kg',
+      'height': '175 cm',
+      'heartRate': '75 bpm',
+      'temperature': '36.7°C',
+    },
+  ];
+
   void _finishAppointment() {
     // Add logic here if needed
     ScaffoldMessenger.of(
@@ -46,7 +63,21 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text("Patient's data"),
-                      const SizedBox(height: 16),
+
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Queue Number",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      Text(
+                        "#$queueNumber",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
                       Text(
                         "Name",
                         style: const TextStyle(
@@ -123,9 +154,76 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Previous Records"),
-                      const SizedBox(height: 8),
-                      Text("this should be a table of records"),
+                      const Text(
+                        "Previous Records",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Expanded(
+                            child: Text(
+                              "Date",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "Weight",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "Height",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "Heart Rate",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "Temp",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(thickness: 1),
+                      ...records.map((record) {
+                        return ExpansionTile(
+                          tilePadding: EdgeInsets.zero,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: Text(record['date'] ?? '')),
+                              Expanded(child: Text(record['weight'] ?? '')),
+                              Expanded(child: Text(record['height'] ?? '')),
+                              Expanded(child: Text(record['heartRate'] ?? '')),
+                              Expanded(
+                                child: Text(record['temperature'] ?? ''),
+                              ),
+                            ],
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                              child: Text("Additional details can go here..."),
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),

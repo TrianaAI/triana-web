@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
             alignment: Alignment.center,
             children: [
               Lottie.asset(
-                '../../assets/triana-splash-1.json',
+                '../../assets/triana-splash.json',
                 fit: BoxFit.cover,
                 controller: _controller,
                 onLoaded: (composition) {
