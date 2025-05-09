@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
             alignment: Alignment.center,
             children: [
               Lottie.asset(
-                'assets/triana-splash.json',
+                'assets/assets/triana-splash.json',
                 fit: BoxFit.cover,
                 controller: _controller,
                 onLoaded: (composition) {
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen>
               Positioned(
                 bottom: 50,
                 child: Text(
-                  'Press anywhere to start',
+                  'Press anywhere to start!',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 18,
