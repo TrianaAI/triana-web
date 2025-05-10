@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
 import 'package:triana_web/utils/country_list.dart';
-import 'package:triana_web/utils/mqtt.dart';
 import 'package:triana_web/utils/utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
@@ -16,7 +15,6 @@ class IdentityForm extends StatefulWidget {
 }
 
 class _IdentityFormState extends State<IdentityForm> {
-  final mqttService = MqttService();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -30,39 +28,6 @@ class _IdentityFormState extends State<IdentityForm> {
   bool _isLoading = false;
   bool? _isMale;
   String? _selectedCountry;
-
-  @override
-  void initState() {
-    super.initState();
-    _connectMqtt();
-  }
-
-  Future<void> _connectMqtt() async {
-    Future.delayed(const Duration(seconds: 1), () {
-      LoadingOverlay.hide();
-    });
-    LoadingOverlay.show(
-      context,
-      Center(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
-    mqttService.connect().then((_) {
-      if (mqttService.client.connectionStatus?.state ==
-          MqttConnectionState.connected) {
-        print('MQTT client connected');
-      } else {
-        print(
-          'MQTT client connection failed - status: ${mqttService.client.connectionStatus}',
-        );
-        mqttService.client.disconnect();
-      }
-    });
-    LoadingOverlay.hide();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -338,48 +303,15 @@ class _IdentityFormState extends State<IdentityForm> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your heart rate';
-                            } else if (int.tryParse(value) == null) {
+                            } else if (double.tryParse(value) == null) {
                               return 'Please enter a valid heart rate';
                             }
                             return null;
                           },
-                          onTap: () {
-                            LoadingOverlay.show(
-                              context,
-                              GestureDetector(
-                                onTap: () {
-                                  LoadingOverlay.hide();
-                                },
-                                child: Container(
-                                  width: 400,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.all(16),
-                                  child: const Center(
-                                    child: Text(
-                                      'Put your finger on the sensor below',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                            mqttService.subscribe('triana/device/1/bloodrate');
-                            mqttService.publish(
-                              'triana/device/1/bloodrate',
-                              'Hello from Flutter!',
-                            );
-                            // Custom onTap logic for Heart Rate
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text(
-                            //       'Heart Rate is connected to IoT device',
-                            //     ),
-                            //   ),
-                            // );
-                          },
+                          onTap:
+                              () async => context
+                                  .read<IdentityFormCubit>()
+                                  .getBPM(context, _heartRateController),
                           readOnly: true, // Make the field non-editable
                         ),
                       ),
@@ -407,38 +339,12 @@ class _IdentityFormState extends State<IdentityForm> {
                             }
                             return null;
                           },
-                          onTap: () {
-                            LoadingOverlay.show(
-                              context,
-                              GestureDetector(
-                                onTap: () {
-                                  LoadingOverlay.hide();
-                                },
-                                child: Container(
-                                  width: 400,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
+                          onTap:
+                              () async =>
+                                  context.read<IdentityFormCubit>().getBodyTemp(
+                                    context,
+                                    _bodyTemperatureController,
                                   ),
-                                  padding: const EdgeInsets.all(16),
-                                  child: const Center(
-                                    child: Text(
-                                      'Put your finger on the sensor below',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                            // Custom onTap logic for Body Temperature
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text(
-                            //       'Body Temperature is connected to IoT device',
-                            //     ),
-                            //   ),
-                            // );
-                          },
                           readOnly: true, // Make the field non-editable
                         ),
                       ),

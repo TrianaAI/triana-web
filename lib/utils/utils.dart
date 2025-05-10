@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
@@ -8,6 +10,11 @@ SizedBox spacerHeight(double height) {
 
 SizedBox spacerWidth(double width) {
   return SizedBox(width: width);
+}
+
+double getRandomDoubleInRange(double min, double max) {
+  final random = Random();
+  return min + (random.nextDouble() * (max - min));
 }
 
 void showOtpDialog(BuildContext context, IdentityFormModel identityForm) {

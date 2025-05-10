@@ -4,19 +4,12 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
+import 'package:triana_web/features/front_counter/cubit/serial_cubit/serial_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
-// import 'package:triana_web/utils/mqtt.dart';
+import 'package:triana_web/services/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // final mqttService = MqttService();
-  // await mqttService.connect();
-
-  // mqttService.subscribe('triana/device/1/bloodrate');
-
-  // mqttService.publish('triana/device/1/bloodrate', 'Hello from Flutter!');
-
   runApp(ModularApp(module: MainRoutes(), child: const MainApp()));
 }
 
@@ -26,13 +19,18 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Modular.setInitialRoute('/front_counter');
-    // Modular.setInitialRoute('/home');
+
+    final serialService = SerialService();
+    final serialCubit = SerialCubit(serialService);
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ChatCubit()),
-        BlocProvider(create: (context) => IdentityFormCubit()),
+        BlocProvider(
+          create: (context) => IdentityFormCubit(serialCubit: serialCubit),
+        ),
         BlocProvider(create: (context) => QueueCubit()),
+        BlocProvider(create: (context) => serialCubit),
       ],
       child: MaterialApp.router(
         title: 'Triana',
@@ -40,7 +38,7 @@ class MainApp extends StatelessWidget {
         routerDelegate: Modular.routerDelegate,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          scaffoldBackgroundColor: Color(0xFFF6F8FA),
+          scaffoldBackgroundColor: const Color(0xFFF6F8FA),
           primaryColor: Colors.black,
           colorScheme: ColorScheme.light(
             primary: Colors.black,
@@ -48,12 +46,12 @@ class MainApp extends StatelessWidget {
             onPrimary: Colors.white,
             onSecondary: Colors.black,
           ),
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xFFF6F8FA),
             foregroundColor: Colors.black,
             elevation: 0,
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
             bodyLarge: TextStyle(color: Colors.black),
             bodyMedium: TextStyle(color: Colors.black),
             bodySmall: TextStyle(color: Colors.black),
@@ -70,18 +68,18 @@ class MainApp extends StatelessWidget {
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+              borderSide: const BorderSide(color: Color(0xFFCFD4D9)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+              borderSide: const BorderSide(color: Color(0xFFCFD4D9)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xFFCFD4D9)),
+              borderSide: const BorderSide(color: Color(0xFFCFD4D9)),
             ),
-            labelStyle: TextStyle(color: Colors.blue),
-            hintStyle: TextStyle(color: Colors.grey),
+            labelStyle: const TextStyle(color: Colors.blue),
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
         ),
       ),
