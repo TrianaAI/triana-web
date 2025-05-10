@@ -18,22 +18,24 @@ ENV FLUTTER_VERSION=3.29.3-stable
 ENV FLUTTER_HOME=/usr/local/flutter
 ENV PATH="$FLUTTER_HOME/bin:$PATH"
 
-# Download and extract Flutter, configure safe directory, then run doctor
 RUN curl -SL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}.tar.xz \
     | tar -xJ -C /usr/local/ \
     && git config --global --add safe.directory /usr/local/flutter \
     && flutter config --no-analytics \
     && flutter doctor -v
 
-# Copy application files and get dependencies
 WORKDIR /app
 COPY pubspec.* ./
 RUN flutter pub get
-
 COPY . .
 
 # Build the web release
 RUN flutter build web --release
+
+# Fingerprint flutter_bootstrap.js and update index.html to use it
+RUN HASH=$(md5sum build/web/flutter_bootstrap.js | cut -c1-8) && \
+    mv build/web/flutter_bootstrap.js build/web/flutter_bootstrap.${HASH}.js && \
+    sed -i "s|flutter_bootstrap.js|flutter_bootstrap.${HASH}.js?v=${HASH}|" build/web/index.html
 
 # Stage 2: Serve with nginx
 FROM nginx:stable-alpine
