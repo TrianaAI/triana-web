@@ -21,3 +21,26 @@ final class IdentityFormFailure extends IdentityFormState {
   @override
   List<Object?> get props => [error];
 }
+
+class IdentityFormBPMReading extends IdentityFormState {
+  @override
+  List<Object> get props => [];
+}
+
+class IdentityFormBPMSuccess extends IdentityFormState {
+  final int bpm;
+
+  const IdentityFormBPMSuccess(this.bpm);
+
+  @override
+  List<Object> get props => [bpm];
+}
+
+class IdentityFormBPMFailure extends IdentityFormState {
+  final String error;
+
+  const IdentityFormBPMFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
