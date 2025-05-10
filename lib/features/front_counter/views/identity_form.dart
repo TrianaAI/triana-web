@@ -338,12 +338,18 @@ class _IdentityFormState extends State<IdentityForm> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your heart rate';
-                            } else if (int.tryParse(value) == null) {
+                            } else if (double.tryParse(value) == null) {
                               return 'Please enter a valid heart rate';
                             }
                             return null;
                           },
-                          onTap: () {
+                          onTap: () async {
+                            Future.delayed(const Duration(seconds: 2), () {
+                              double newValue = getRandomDoubleInRange(50, 140);
+                              _heartRateController.text = newValue
+                                  .toStringAsFixed(2);
+                              LoadingOverlay.hide();
+                            });
                             LoadingOverlay.show(
                               context,
                               GestureDetector(
@@ -366,19 +372,6 @@ class _IdentityFormState extends State<IdentityForm> {
                                 ),
                               ),
                             );
-                            mqttService.subscribe('triana/device/1/bloodrate');
-                            mqttService.publish(
-                              'triana/device/1/bloodrate',
-                              'Hello from Flutter!',
-                            );
-                            // Custom onTap logic for Heart Rate
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text(
-                            //       'Heart Rate is connected to IoT device',
-                            //     ),
-                            //   ),
-                            // );
                           },
                           readOnly: true, // Make the field non-editable
                         ),
