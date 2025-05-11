@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:triana_web/features/front_counter/models/form.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 
 class ChatView extends StatefulWidget {
-  final IdentityFormModel? identityForm;
-  const ChatView({super.key, this.identityForm});
+  final String session;
+  const ChatView({super.key, required this.session});
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -17,10 +16,10 @@ class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
     super.initState();
-    // Initialize the chat with the identity form data if available
-    if (widget.identityForm != null) {
-      context.read<ChatCubit>().initializeChat(widget.identityForm!);
-    }
+    print(widget.session);
+    context.read<ChatCubit>().initializeChat();
+    // if (widget.identityForm != null) {
+    // }
   }
 
   @override
@@ -70,33 +69,59 @@ class _ChatViewState extends State<ChatView> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    onSubmitted: (value) {
-                      context.read<ChatCubit>().sendMessage(value);
-                      _messageController.clear();
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          "Done/selesai",
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),
-                    maxLines: null,
+                    ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    context.read<ChatCubit>().sendMessage(
-                      _messageController.text,
-                    );
-                    _messageController.clear();
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        onSubmitted: (value) {
+                          context.read<ChatCubit>().sendMessage(value);
+                          _messageController.clear();
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Type a message',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        maxLines: null,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () {
+                        context.read<ChatCubit>().sendMessage(
+                          _messageController.text,
+                        );
+                        _messageController.clear();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

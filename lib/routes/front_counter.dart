@@ -5,10 +5,11 @@ class FrontCounterModule extends Module {
   void routes(RouteManager r) {
     r.child('/', child: (_) => const IdentityForm());
     r.child(
-      '/chat',
-      child: (_) => ChatView(identityForm: r.args.data as IdentityFormModel),
+      '/chat/:session',
+      child: (_) => ChatView(session: r.args.params['session']),
     );
+    // r.child('/chat', child: (_) => const ChatView());
     r.child('/queue', child: (_) => const QueueNumber());
-    r.child('/config', child: (_) => const ConfigView());
+    r.child('/config', child: (_) => const ConfigBlueView());
   }
 }

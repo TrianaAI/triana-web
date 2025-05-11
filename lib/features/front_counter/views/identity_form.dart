@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
 import 'package:triana_web/utils/country_list.dart';
 import 'package:triana_web/utils/utils.dart';
@@ -25,7 +24,6 @@ class _IdentityFormState extends State<IdentityForm> {
   final _heartRateController = TextEditingController();
   final _bodyTemperatureController = TextEditingController();
   DateTime? _dateOfBirth;
-  bool _isLoading = false;
   bool? _isMale;
   String? _selectedCountry;
 
@@ -33,20 +31,23 @@ class _IdentityFormState extends State<IdentityForm> {
   Widget build(BuildContext context) {
     const labelWidth = 120.0; // Fixed width for all labels
     const labelStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
-    const fieldPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+    // const fieldPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
     return Scaffold(
       body: BlocListener<IdentityFormCubit, IdentityFormState>(
         listener: (context, state) {
           if (state is IdentityFormLoading) {
-            setState(() => _isLoading = true);
+            LoadingOverlay.show(
+              context,
+              const Center(child: CircularProgressIndicator()),
+            );
           } else if (state is IdentityFormSuccess) {
-            setState(() => _isLoading = false);
+            LoadingOverlay.hide();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Form submitted successfully!')),
+              const SnackBar(content: Text('Loading successful!')),
             );
           } else if (state is IdentityFormFailure) {
-            setState(() => _isLoading = false);
+            LoadingOverlay.hide();
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Error: ${state.error}')));
@@ -483,7 +484,6 @@ class _IdentityFormState extends State<IdentityForm> {
                 ],
               ),
             ),
-            if (_isLoading) const Center(child: CircularProgressIndicator()),
           ],
         ),
       ),
@@ -533,55 +533,6 @@ class _IdentityFormState extends State<IdentityForm> {
             validator: validator,
             onTap: onTap,
             readOnly: readOnly,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCountryDropdown({
-    required String label,
-    required double labelWidth,
-    required TextStyle labelStyle,
-    required EdgeInsets fieldPadding,
-    required String? Function(String?)? validator,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(width: labelWidth, child: Text(label, style: labelStyle)),
-        spacerWidth(20),
-        Expanded(
-          child: SizedBox(
-            // width: 500,
-            child: DropdownButtonFormField<String>(
-              value: _selectedCountry,
-              decoration: InputDecoration(
-                contentPadding: fieldPadding,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-                ),
-              ),
-              hint: const Text('Select Nationality'),
-              items:
-                  countries.map((String country) {
-                    return DropdownMenuItem<String>(
-                      value: country,
-                      child: Text(country),
-                    );
-                  }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCountry = newValue;
-                });
-              },
-              validator: validator,
-            ),
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 class IdentityFormModel extends Equatable {
@@ -11,11 +12,11 @@ class IdentityFormModel extends Equatable {
   final double bodyTemperature;
   final String nationality;
   final DateTime dateOfBirth;
+  String? otp;
 
-  const IdentityFormModel({
+  IdentityFormModel({
     required this.name,
     required this.email,
-    // required this.phoneNumber,
     required this.weight,
     required this.height,
     required this.isMale,
@@ -23,6 +24,7 @@ class IdentityFormModel extends Equatable {
     required this.bodyTemperature,
     required this.nationality,
     required this.dateOfBirth,
+    this.otp,
   });
 
   @override
@@ -36,6 +38,9 @@ class IdentityFormModel extends Equatable {
     heartRate,
     bodyTemperature,
     nationality,
+    dateOfBirth,
+    otp,
+    // age,
   ];
 
   factory IdentityFormModel.fromJson(Map<String, dynamic> json) {
@@ -45,7 +50,7 @@ class IdentityFormModel extends Equatable {
       // phoneNumber: json['phoneNumber'] as String,
       weight: (json['weight'] as num).toDouble(),
       height: (json['height'] as num).toDouble(),
-      isMale: json['isMale'] as bool,
+      isMale: json['isMale'] == "Male" ? true : false,
       heartRate: (json['heartRate'] as num).toDouble(),
       bodyTemperature: (json['bodyTemperature'] as num).toDouble(),
       nationality: json['nationality'] as String,
@@ -60,11 +65,12 @@ class IdentityFormModel extends Equatable {
       // 'phoneNumber': phoneNumber,
       'weight': weight,
       'height': height,
-      'isMale': isMale,
-      'heartRate': heartRate,
-      'bodyTemperature': bodyTemperature,
+      'gender': isMale ? "Male" : "Female",
+      'heartrate': heartRate,
+      'bodytemp': bodyTemperature,
       'nationality': nationality,
-      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'dob': dateOfBirth.toIso8601String(),
+      'otp': otp, // Added otp field
     };
   }
 
@@ -80,6 +86,7 @@ class IdentityFormModel extends Equatable {
     double? bodyTemperature,
     String? nationality,
     DateTime? dateOfBirth,
+    String? otp,
   }) {
     return IdentityFormModel(
       name: name ?? this.name,
@@ -93,6 +100,7 @@ class IdentityFormModel extends Equatable {
       bodyTemperature: bodyTemperature ?? this.bodyTemperature,
       nationality: nationality ?? this.nationality,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      otp: otp ?? this.otp,
     );
   }
 }

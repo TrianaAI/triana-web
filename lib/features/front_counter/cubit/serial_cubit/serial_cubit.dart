@@ -42,7 +42,7 @@ class SerialCubit extends Cubit<SerialState> {
     try {
       emit(SerialCubitLoading());
       await _serialService.writeToPort(data);
-      emit(SerialCubitDataWritten());
+      // emit(SerialCubitDataWritten());
     } catch (e) {
       emit(SerialCubitError(e.toString()));
     }
