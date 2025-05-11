@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/models/form.dart';
+import 'package:triana_web/services/network.dart';
+import 'package:triana_web/utils/constants.dart';
 
 SizedBox spacerHeight(double height) {
   return SizedBox(height: height);
@@ -19,6 +21,8 @@ double getRandomDoubleInRange(double min, double max) {
 
 void showOtpDialog(BuildContext context, IdentityFormModel identityForm) {
   final TextEditingController otpController = TextEditingController();
+  final netowrkService = NetworkService();
+  bool _isLoading = false;
 
   showDialog(
     context: context,
@@ -41,16 +45,63 @@ void showOtpDialog(BuildContext context, IdentityFormModel identityForm) {
             },
             child: const Text('Cancel'),
           ),
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            const SizedBox.shrink(),
           ElevatedButton(
             onPressed: () {
+              // Modular.to.pushNamed(
+              //   '/front_counter/chat/32e77e93-dde5-4999-a73c-75c1b55afa17',
+              // );
+              //32e77e93-dde5-4999-a73c-75c1b55afa17
+              if (otpController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter the OTP')),
+                );
+                return;
+              }
+              _isLoading = true;
               final otp = otpController.text;
-              // Handle OTP submission logic here
-              // Navigator.of(context).pop(); // Close the dialog
-              Modular.to.pop(); // Close the dialog
-              Modular.to.pushNamed(
-                '/front_counter/chat',
-                arguments: identityForm,
-              ); // Pass OTP to the next screen
+              final data = identityForm.copyWith(otp: otp);
+
+              print(data.toJson());
+
+              netowrkService
+                  .post(kVerifyOTPUrl, data: data.toJson())
+                  .then((response) {
+                    if (response.statusCode == 200) {
+                      final responseData = response.data['session']['id'];
+                      print(responseData);
+                      // final session =
+                      //     responseData['session']['id']
+                      //         as String; // Extract session ID
+
+                      // print('Session ID: $session');
+                      _isLoading = false;
+                      Modular.to.pop(); // Close the dialog
+                      Modular.to.pushNamed('/front_counter/chat/$responseData');
+                      // Modular.to.pushNamed(
+                      //   '/front_counter/chat',
+                      //   // arguments: responseData,
+                      // );
+                    } else {
+                      _isLoading = false;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid OTP. Please try again.'),
+                        ),
+                      );
+                    }
+                  })
+                  .catchError((error) {
+                    print(error);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Network error. Please try again.'),
+                      ),
+                    );
+                  });
             },
             child: const Text('Submit'),
           ),

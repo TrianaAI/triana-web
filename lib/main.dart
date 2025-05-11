@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:triana_web/features/front_counter/cubit/bluetooth/bluetooth_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/serial_cubit/serial_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
+import 'package:triana_web/services/bluetooth.dart';
 import 'package:triana_web/services/services.dart';
 
 void main() async {
@@ -20,17 +22,21 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Modular.setInitialRoute('/front_counter');
 
-    final serialService = SerialService();
-    final serialCubit = SerialCubit(serialService);
+    final bluetoothService = BluetoothService();
+    // final serialService = SerialService();
+    // final serialCubit = SerialCubit(serialService);
+    final bluetoothCubit = BluetoothCubit(bluetoothService);
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ChatCubit()),
         BlocProvider(
-          create: (context) => IdentityFormCubit(serialCubit: serialCubit),
+          create:
+              (context) => IdentityFormCubit(bluetoothCubit: bluetoothCubit),
         ),
         BlocProvider(create: (context) => QueueCubit()),
-        BlocProvider(create: (context) => serialCubit),
+        BlocProvider(create: (context) => bluetoothCubit),
+        // BlocProvider(create: (context) => serialCubit),
       ],
       child: MaterialApp.router(
         title: 'Triana',

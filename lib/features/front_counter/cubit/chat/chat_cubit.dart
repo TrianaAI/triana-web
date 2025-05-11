@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:triana_web/features/front_counter/models/form.dart';
 
 part 'chat_state.dart';
 
@@ -20,12 +19,13 @@ class ChatCubit extends Cubit<ChatState> {
 
   List<Map<String, String>> get messages => List.unmodifiable(_messages);
 
-  void initializeChat(IdentityFormModel identityForm) {
+  void initializeChat() {
+    print('Initializing chat...');
     // Initialize the chat with the identity form data
-    _messages.add({
-      'sender': 'User',
-      'message': 'Hello, my name is ${identityForm.name}.',
-    });
+    // _messages.add({
+    //   'sender': 'User',
+    //   'message': 'Hello, my name is ${identityForm.name}.',
+    // });
     emit(ChatUpdated(List.unmodifiable(_messages)));
   }
 

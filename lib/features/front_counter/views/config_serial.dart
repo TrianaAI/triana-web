@@ -76,13 +76,10 @@ class _ConfigViewState extends State<ConfigView> {
                           style: const TextStyle(color: Colors.red),
                         ),
                       );
+                    } else if (state is SerialCubitLoading) {
+                      return const Center(child: CircularProgressIndicator());
                     } else {
-                      return const Center(
-                        child: Text(
-                          'No data received yet.',
-                          textAlign: TextAlign.center,
-                        ),
-                      );
+                      return const Center(child: Text('No data received yet.'));
                     }
                   },
                 ),
@@ -101,6 +98,7 @@ class _ConfigViewState extends State<ConfigView> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Message to send',
+                      labelStyle: TextStyle(color: Colors.grey),
                     ),
                   ),
                 ),

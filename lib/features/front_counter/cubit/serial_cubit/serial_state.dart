@@ -1,6 +1,3 @@
-import 'package:equatable/equatable.dart';
-import 'dart:typed_data';
-
 part of 'serial_cubit.dart';
 
 abstract class SerialState extends Equatable {
@@ -22,7 +19,7 @@ class SerialCubitDataWritten extends SerialState {}
 
 class SerialCubitDataReceived extends SerialState {
   final List<Uint8List> receivedData;
-  
+
   const SerialCubitDataReceived(this.receivedData);
 
   @override
@@ -31,7 +28,7 @@ class SerialCubitDataReceived extends SerialState {
 
 class SerialCubitError extends SerialState {
   final String message;
-  
+
   const SerialCubitError(this.message);
 
   @override
