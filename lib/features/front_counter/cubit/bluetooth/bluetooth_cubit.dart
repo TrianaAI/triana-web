@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:triana_web/services/bluetooth.dart';
+import 'package:triana_web/services/services.dart';
 
 part 'bluetooth_state.dart';
 

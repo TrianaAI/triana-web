@@ -7,14 +7,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatInitial());
 
   final List<Map<String, String>> _messages = [
-    {'sender': 'User', 'message': 'Hello!'},
     {'sender': 'Bot', 'message': 'Hi there! How can I help you today?'},
-    {'sender': 'User', 'message': 'I need some assistance with my account.'},
-    {
-      'sender': 'Bot',
-      'message':
-          'Sure, I can help with that. Could you please provide more details?',
-    },
   ];
 
   List<Map<String, String>> get messages => List.unmodifiable(_messages);
@@ -35,10 +28,12 @@ class ChatCubit extends Cubit<ChatState> {
 
   void sendMessage(String message) {
     if (message.isNotEmpty) {
-      emit(ChatLoading());
       // Simulate a delay for loading state
+      _messages.add({'sender': 'User', 'message': message});
+      emit(ChatUpdated(List.unmodifiable(_messages)));
       Future.delayed(const Duration(seconds: 1), () {
-        _messages.add({'sender': 'User', 'message': message});
+        emit(ChatLoading(List.unmodifiable(_messages)));
+        // TODO: Get a response from the bot
         emit(ChatUpdated(List.unmodifiable(_messages)));
       });
     }

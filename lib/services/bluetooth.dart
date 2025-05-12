@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-import 'package:web_blue/web_blue.dart';
+part of 'services.dart';
 
 const serviceUuid = '12345678-1234-1234-1234-123456789abc';
 const characteristicUuid = '87654321-4321-4321-4321-cba987654321';
