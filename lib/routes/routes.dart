@@ -8,7 +8,9 @@ import 'package:triana_web/features/front_counter/views/queue.dart';
 
 import 'package:triana_web/features/doctor/views/diagnosis.dart';
 import 'package:triana_web/features/doctor/views/home.dart';
-
+import 'package:triana_web/features/doctor/cubit/doctor_home_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/splash.dart';
 
 part 'front_counter.dart';
