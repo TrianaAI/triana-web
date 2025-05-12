@@ -17,7 +17,7 @@ class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
     super.initState();
-    context.read<ChatCubit>().initializeChat();
+    context.read<ChatCubit>().initializeChat(widget.session);
   }
 
   @override
@@ -31,6 +31,7 @@ class _ChatViewState extends State<ChatView> {
               builder: (context, state) {
                 if (state is ChatUpdated) {
                   return ListView.builder(
+                    padding: const EdgeInsets.all(8),
                     reverse: true,
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
@@ -49,46 +50,58 @@ class _ChatViewState extends State<ChatView> {
                   );
                 }
                 if (state is ChatLoading) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          reverse: true,
-                          itemCount: state.previousMessages.length,
-                          itemBuilder: (context, index) {
-                            final message = state.previousMessages[index];
-                            final isUser = message['sender'] == 'User';
-                            return BubbleSpecialOne(
-                              text: message['message']!,
-                              isSender: isUser,
-                              color:
-                                  isUser ? Colors.blue : Colors.grey.shade300,
-                              textStyle: TextStyle(
-                                color: isUser ? Colors.white : Colors.black87,
-                                fontSize: 26,
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    reverse: true,
+                    itemCount:
+                        state.previousMessages.length +
+                        1, // Add 1 for the loading indicator
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 10),
+                              const CircularProgressIndicator(strokeWidth: 2),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Typing...',
+                                style: TextStyle(color: Colors.grey.shade600),
                               ),
-                            );
-                          },
+                            ],
+                          ),
+                        );
+                      }
+                      final message =
+                          state.previousMessages[state.previousMessages.length -
+                              index];
+                      final isUser = message['sender'] == 'User';
+                      return BubbleSpecialOne(
+                        text: message['message']!,
+                        isSender: isUser,
+                        color: isUser ? Colors.blue : Colors.grey.shade300,
+                        textStyle: TextStyle(
+                          color: isUser ? Colors.white : Colors.black87,
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            const CircularProgressIndicator(strokeWidth: 2),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Typing...',
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                if (state is ChatError) {
+                  return Center(
+                    child: Text(
+                      state.error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                return const Center(
+                  child: Text(
+                    'No messages yet.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                );
               },
             ),
           ),
@@ -102,37 +115,73 @@ class _ChatViewState extends State<ChatView> {
             ),
             child: Column(
               children: [
+                // BlocBuilder<ChatCubit, ChatState>(
+                //   builder: (context, state) {
+                //     if (state is ChatUpdated && state.messages.length >= 4) {
+                //       return Container(
+                //         height: 40,
+                //         margin: const EdgeInsets.only(bottom: 8, top: 8),
+                //         padding: const EdgeInsets.all(2),
+                //         child: ListView(
+                //           scrollDirection: Axis.horizontal,
+                //           children: [
+                //             GestureDetector(
+                //               onTap: () {
+                //                 context.read<ChatCubit>().sendMessage("Done");
+                //                 _messageController.clear();
+                //               },
+                //               child: Container(
+                //                 margin: const EdgeInsets.only(right: 8),
+                //                 padding: const EdgeInsets.all(8),
+                //                 decoration: BoxDecoration(
+                //                   color: Colors.blue[100],
+                //                   borderRadius: BorderRadius.circular(10),
+                //                 ),
+                //                 child: Center(
+                //                   child: Text(
+                //                     "Done/selesai",
+                //                     style: const TextStyle(fontSize: 16),
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       );
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
                 BlocBuilder<ChatCubit, ChatState>(
                   builder: (context, state) {
                     if (state is ChatUpdated && state.messages.length >= 4) {
                       return Container(
                         height: 40,
-                        margin: const EdgeInsets.only(bottom: 8, top: 8),
+                        width: 180,
+                        margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.all(2),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                context.read<ChatCubit>().sendMessage("Done");
-                                _messageController.clear();
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[100],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Done/selesai",
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ),
+                        child: GestureDetector(
+                          onTap: () {
+                            context.read<ChatCubit>().sendMessage(
+                              "Done",
+                              // widget.session,
+                            );
+                            _messageController.clear();
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Done/selesai",
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       );
                     }
@@ -145,7 +194,10 @@ class _ChatViewState extends State<ChatView> {
                       child: TextField(
                         controller: _messageController,
                         onSubmitted: (value) {
-                          context.read<ChatCubit>().sendMessage(value);
+                          context.read<ChatCubit>().sendMessage(
+                            value,
+                            // widget.session,
+                          );
                           _messageController.clear();
                         },
                         decoration: const InputDecoration(
@@ -155,6 +207,7 @@ class _ChatViewState extends State<ChatView> {
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                         ),
+
                         maxLines: null,
                       ),
                     ),
@@ -163,6 +216,7 @@ class _ChatViewState extends State<ChatView> {
                       onPressed: () {
                         context.read<ChatCubit>().sendMessage(
                           _messageController.text,
+                          // widget.session,
                         );
                         _messageController.clear();
                       },
