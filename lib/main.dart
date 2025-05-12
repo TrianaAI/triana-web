@@ -5,9 +5,7 @@ import 'package:triana_web/features/front_counter/cubit/bluetooth/bluetooth_cubi
 import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
-import 'package:triana_web/features/front_counter/cubit/serial_cubit/serial_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
-import 'package:triana_web/services/bluetooth.dart';
 import 'package:triana_web/services/services.dart';
 
 void main() async {

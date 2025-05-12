@@ -79,6 +79,11 @@ class _ConfigBlueViewState extends State<ConfigBlueView> {
                       hintText: 'Type a message...',
                       border: InputBorder.none,
                     ),
+                    onSubmitted: (value) {
+                      final cubit = context.read<BluetoothCubit>();
+                      cubit.sendMessage(value);
+                      _controller.clear();
+                    },
                   ),
                 ),
                 IconButton(

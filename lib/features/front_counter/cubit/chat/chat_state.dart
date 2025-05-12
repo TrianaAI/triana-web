@@ -9,7 +9,13 @@ sealed class ChatState extends Equatable {
 
 final class ChatInitial extends ChatState {}
 
-final class ChatLoading extends ChatState {}
+final class ChatLoading extends ChatState {
+  final List<Map<String, String>> previousMessages;
+  const ChatLoading(this.previousMessages);
+
+  @override
+  List<Object> get props => [previousMessages];
+}
 
 final class ChatUpdated extends ChatState {
   final List<Map<String, String>> messages;
