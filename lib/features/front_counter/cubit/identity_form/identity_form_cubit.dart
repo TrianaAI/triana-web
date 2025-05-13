@@ -46,7 +46,7 @@ class IdentityFormCubit extends Cubit<IdentityFormState> {
     TextEditingController controller,
   ) async {
     // Check if Bluetooth is connected first
-    if (bluetoothCubit.state is! BluetoothConnected) {
+    if (!bluetoothCubit.isConnected) {
       _showManualTempInputDialog(
         ctx,
         controller,
@@ -139,7 +139,7 @@ class IdentityFormCubit extends Cubit<IdentityFormState> {
     TextEditingController controller,
   ) async {
     // Check if Bluetooth is connected first
-    if (bluetoothCubit.state is! BluetoothConnected) {
+    if (!bluetoothCubit.isConnected) {
       _showManualInputDialog(
         ctx,
         controller,

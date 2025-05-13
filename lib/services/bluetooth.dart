@@ -53,6 +53,8 @@ class BluetoothService {
     _characteristic = null;
   }
 
+  bool get isConnected => _characteristic != null;
+
   get device => _device;
   get service => _service;
   get characteristic => _characteristic;

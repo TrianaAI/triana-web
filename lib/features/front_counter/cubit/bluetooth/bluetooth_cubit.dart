@@ -56,4 +56,6 @@ class BluetoothCubit extends Cubit<BluetoothState> {
       emit(BluetoothError(e.toString()));
     }
   }
+
+  bool get isConnected => _bluetoothService.isConnected;
 }
