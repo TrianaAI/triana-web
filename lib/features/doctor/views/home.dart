@@ -15,8 +15,26 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Doctor Home')),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/triana-logo.png',
+              height: 70, // Adjust size as needed
+            ),
+            const SizedBox(width: 8), // Spacing between logo and text
+            Text(
+              'Doctor Home',
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
         builder: (context, state) {
           if (state is DoctorHomeLoading) {
@@ -45,10 +63,13 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                               child: Center(
-                                child: Icon(Icons.person, color: Colors.blue),
+                                child: Icon(
+                                  Icons.person,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -96,12 +117,12 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                               child: Center(
                                 child: Icon(
                                   Icons.medical_services,
-                                  color: Colors.blue,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -127,10 +148,13 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                               child: Center(
-                                child: Icon(Icons.room, color: Colors.blue),
+                                child: Icon(
+                                  Icons.room,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -176,10 +200,13 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                               child: Center(
-                                child: Icon(Icons.today, color: Colors.blue),
+                                child: Icon(
+                                  Icons.today,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -205,12 +232,12 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                               child: Center(
                                 child: Icon(
                                   Icons.calendar_month,
-                                  color: Colors.blue,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -239,6 +266,13 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                           Text("Current Queue"),
                         const SizedBox(height: 8),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.colorScheme.primary,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 32,
+                            ),
+                          ),
                           onPressed: () {
                             Modular.to.pushNamed(
                               '/doctor/diagnosis/${state.doctor.currentQueue["session"]["user_id"]}',

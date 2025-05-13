@@ -57,8 +57,26 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Diagnosis')),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/triana-logo.png',
+              height: 70, // Adjust size as needed
+            ),
+            const SizedBox(width: 8), // Spacing between logo and text
+            Text(
+              'Doctor Home',
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: BlocBuilder<DoctorDiagnosisCubit, DoctorDiagnosisState>(
         builder: (context, state) {
           if (state is DoctorDiagnosisLoading) {
@@ -339,6 +357,13 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
                       const SizedBox(height: 24),
 
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 32,
+                          ),
+                        ),
                         onPressed: () {
                           _finishAppointment(
                             state
