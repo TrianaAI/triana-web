@@ -1,12 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:triana_web/features/front_counter/models/queue.dart';
 import 'package:triana_web/services/network.dart';
 import 'package:triana_web/utils/constants.dart';
 import 'package:triana_web/utils/pallete.dart';
-import 'package:triana_web/utils/utils.dart';
 
 part 'chat_state.dart';
 
@@ -38,7 +36,7 @@ class ChatCubit extends Cubit<ChatState> {
     setSession(session);
     emit(ChatLoading(messages));
     try {
-      final response = await networkService
+      await networkService
           .post('$kSessionUrl/$_session', data: {'new_message': 'Hello!'})
           .then((response) {
             if (response.statusCode == 200) {
@@ -116,19 +114,8 @@ class ChatCubit extends Cubit<ChatState> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  // Close button at top right
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Colors.grey[600],
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(dialogContext);
-                                      },
-                                    ),
-                                  ),
+                                  // Close button at top right (removed to prevent accidental dismissal)
+                                  // We remove the close button to ensure users complete the appointment process
 
                                   // Header with icon
                                   Column(
@@ -167,23 +154,28 @@ class ChatCubit extends Cubit<ChatState> {
                                           icon: Icons.person,
                                           label: 'Doctor:',
                                           value:
-                                              data.queue?.doctor.name ?? 'N/A',
+                                              data.queue != null
+                                                  ? data.queue!.doctor.name
+                                                  : 'N/A',
                                         ),
                                         const SizedBox(height: 12),
                                         _buildDetailRow(
                                           icon: Icons.meeting_room,
                                           label: 'Room:',
                                           value:
-                                              data.queue?.doctor.roomNo ??
-                                              'N/A',
+                                              data.queue != null
+                                                  ? data.queue!.doctor.roomNo
+                                                  : 'N/A',
                                         ),
                                         const SizedBox(height: 12),
                                         _buildDetailRow(
                                           icon: Icons.confirmation_number,
                                           label: 'Queue Number:',
                                           value:
-                                              data.queue?.number?.toString() ??
-                                              'N/A',
+                                              data.queue != null
+                                                  ? data.queue!.number
+                                                      .toString()
+                                                  : 'N/A',
                                         ),
                                       ],
                                     ),
@@ -209,7 +201,7 @@ class ChatCubit extends Cubit<ChatState> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         Navigator.pop(dialogContext);
-                                        Modular.to.navigate('/');
+                                        // We don't navigate away automatically, so the user can continue the chat
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: kPrimaryColor,
