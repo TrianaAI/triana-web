@@ -13,9 +13,11 @@ class DoctorHomeCubit extends Cubit<DoctorHomeState> {
     emit(DoctorHomeLoading());
     try {
       final response = await _dio.get(
-        'https://your-api.com/doctor/$doctorId/home',
+        'https://apidev-triana.sportsnow.app/doctor/$doctorId',
       );
+
       final summary = Doctor.fromJson(response.data);
+
       emit(DoctorHomeLoaded(summary));
     } catch (e) {
       emit(DoctorHomeError('Failed to load doctor summary'));

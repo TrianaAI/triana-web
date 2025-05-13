@@ -42,9 +42,29 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Hello, ${state.doctor.doctor["name"]}",
-                          style: TextStyle(fontSize: 20),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 30,
+                              child: Center(
+                                child: Icon(Icons.person, color: Colors.blue),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Hello, ${state.doctor.doctor["name"]}",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              state.doctor.doctor["email"],
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         const Text(
@@ -73,19 +93,63 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Specialization",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          state.doctor.doctor["specialty"],
-                          style: TextStyle(fontSize: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 30,
+                              child: Center(
+                                child: Icon(
+                                  Icons.medical_services,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Specialization",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    state.doctor.doctor["specialty"],
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                        const Text("Room", style: TextStyle(fontSize: 16)),
-                        Text(
-                          state.doctor.doctor["room"],
-                          style: TextStyle(fontSize: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 30,
+                              child: Center(
+                                child: Icon(Icons.room, color: Colors.blue),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Room",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    state.doctor.doctor["roomno"],
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -109,22 +173,65 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Appointments Today",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          state.doctor.dailyAppointmentCount.toString(),
-                          style: TextStyle(fontSize: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 30,
+                              child: Center(
+                                child: Icon(Icons.today, color: Colors.blue),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Appointments Today",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    state.doctor.dailyAppointmentCount
+                                        .toString(),
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          "All Appointments",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          state.doctor.allTimeAppointmentCount.toString(),
-                          style: TextStyle(fontSize: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 30,
+                              child: Center(
+                                child: Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "All Appointments",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    state.doctor.allTimeAppointmentCount
+                                        .toString(),
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
