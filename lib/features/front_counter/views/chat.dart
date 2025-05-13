@@ -44,11 +44,32 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _resetInactivityTimer,
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Triana'), centerTitle: true),
-        body: Column(
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent back button navigation
+        return false;
+      },
+      child: GestureDetector(
+        onTap: _resetInactivityTimer,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Triana'),
+            centerTitle: true,
+            automaticallyImplyLeading: false, // Removes the back button
+            actions: [
+              TextButton.icon(
+                onPressed: () {
+                  Modular.to.navigate('/');
+                },
+                icon: const Icon(Icons.close, color: Colors.red),
+                label: const Text(
+                  'End Session',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+          body: Column(
           children: [
             Expanded(
               child: BlocBuilder<ChatCubit, ChatState>(
