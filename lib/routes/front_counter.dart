@@ -9,7 +9,7 @@ class FrontCounterModule extends Module {
       child: (_) => ChatView(session: r.args.params['session']),
     );
     // r.child('/chat', child: (_) => const ChatView());
-    r.child('/queue', child: (_) => const QueueNumber());
+    r.child('/queue', child: (_) => QueueNumber(queueData: r.args.data));
     r.child('/config', child: (_) => const ConfigBlueView());
   }
 }

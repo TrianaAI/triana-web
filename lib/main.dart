@@ -8,6 +8,7 @@ import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
 import 'package:triana_web/services/network.dart';
 import 'package:triana_web/services/services.dart';
+import 'package:triana_web/utils/pallete.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class MainApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFFF6F8FA),
           primaryColor: Colors.black,
           colorScheme: ColorScheme.light(
-            primary: Colors.black,
+            primary: kPrimaryColor,
             secondary: Colors.grey,
             onPrimary: Colors.white,
             onSecondary: Colors.black,
