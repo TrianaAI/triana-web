@@ -59,22 +59,27 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/triana-logo.png',
-              height: 70, // Adjust size as needed
-            ),
-            const SizedBox(width: 8), // Spacing between logo and text
-            Text(
-              'Doctor Home',
-              style: TextStyle(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(92),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/triana-logo.png',
+                height: 70, // Adjust size as needed
               ),
-            ),
-          ],
+              const SizedBox(width: 16), // Spacing between logo and text
+              Text(
+                'Doctor Diagnosis',
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: BlocBuilder<DoctorDiagnosisCubit, DoctorDiagnosisState>(
@@ -209,122 +214,133 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
 
                       const SizedBox(height: 16),
 
-                      Container(
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Previous Records",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                      if (state.diagnosis.historySession.isEmpty)
+                        const Center(child: Text("No previous records"))
+                      else ...[
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Expanded(
-                                  child: Text(
-                                    "Date",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Previous Records",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    "Weight",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "Height",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "Heart Rate",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "Temp",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Divider(thickness: 1),
-                            ...state.diagnosis.historySession.map((record) {
-                              return ExpansionTile(
-                                tilePadding: EdgeInsets.zero,
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        DateFormat('d MMMM yyyy').format(
-                                          DateTime.parse(record['created_at']),
-                                        ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: const [
+                                  Expanded(
+                                    child: Text(
+                                      "Date",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Text(record['weight'].toString()),
-                                    ),
-                                    Expanded(
-                                      child: Text(record['height'].toString()),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        record['heartrate'].toString(),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "Weight",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        record['bodytemp'].toString(),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "Height",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 8.0,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "Heart Rate",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                    child: Text(record['prediagnosis'] ?? ''),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "Temp",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ],
-                              );
-                            }),
-                          ],
+                              ),
+                              const Divider(thickness: 1),
+                              ...state.diagnosis.historySession.map((record) {
+                                return ExpansionTile(
+                                  tilePadding: EdgeInsets.zero,
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          DateFormat('d MMMM yyyy').format(
+                                            DateTime.parse(
+                                              record['created_at'],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          record['weight'].toString(),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          record['height'].toString(),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          record['heartrate'].toString(),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          record['bodytemp'].toString(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: Text(record['prediagnosis'] ?? ''),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
 
                       const SizedBox(height: 16),
 

@@ -17,22 +17,27 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/triana-logo.png',
-              height: 70, // Adjust size as needed
-            ),
-            const SizedBox(width: 8), // Spacing between logo and text
-            Text(
-              'Doctor Home',
-              style: TextStyle(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(92),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/triana-logo.png',
+                height: 70, // Adjust size as needed
               ),
-            ),
-          ],
+              const SizedBox(width: 16), // Spacing between logo and text
+              Text(
+                'Doctor Home',
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
