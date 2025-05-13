@@ -79,130 +79,166 @@ class ChatCubit extends Cubit<ChatState> {
                   _messages.add({'sender': 'Bot', 'message': data.reply!});
                   emit(ChatUpdated(List.unmodifiable(_messages)));
                   if (data.nextAction == "APPOINTMENT") {
-                    Future.delayed(const Duration(seconds: 30), () {
-                      LoadingOverlay.hide();
-                    });
-                    LoadingOverlay.show(
-                      ctx,
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 32,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 24,
-                              offset: const Offset(0, 8),
+                    // Show appointment confirmation dialog
+                    showDialog(
+                      context: ctx,
+                      barrierDismissible:
+                          false, // Prevent dismissing by tapping outside
+                      builder: (BuildContext dialogContext) {
+                        return WillPopScope(
+                          // Prevent back button from closing the dialog
+                          onWillPop: () async => false,
+                          child: Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Header with icon
-                            Column(
-                              children: [
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 64,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Appointment Confirmed',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[800],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Appointment details
-                            Container(
-                              width: 400,
-                              padding: const EdgeInsets.all(16),
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                maxWidth: 500, // Maximum width
+                                minWidth: 300, // Minimum width
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 32,
+                              ),
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 24,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
                               ),
                               child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  _buildDetailRow(
-                                    icon: Icons.person,
-                                    label: 'Doctor:',
-                                    value: data.queue?.doctor.name ?? 'N/A',
+                                  // Close button at top right
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.grey[600],
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext);
+                                      },
+                                    ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  _buildDetailRow(
-                                    icon: Icons.meeting_room,
-                                    label: 'Room:',
-                                    value: data.queue?.doctor.roomNo ?? 'N/A',
+
+                                  // Header with icon
+                                  Column(
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 64,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Appointment Confirmed',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[800],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 12),
-                                  _buildDetailRow(
-                                    icon: Icons.confirmation_number,
-                                    label: 'Queue Number:',
-                                    value:
-                                        data.queue?.number?.toString() ?? 'N/A',
+
+                                  const SizedBox(height: 32),
+
+                                  // Appointment details
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[50],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        _buildDetailRow(
+                                          icon: Icons.person,
+                                          label: 'Doctor:',
+                                          value:
+                                              data.queue?.doctor.name ?? 'N/A',
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _buildDetailRow(
+                                          icon: Icons.meeting_room,
+                                          label: 'Room:',
+                                          value:
+                                              data.queue?.doctor.roomNo ??
+                                              'N/A',
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _buildDetailRow(
+                                          icon: Icons.confirmation_number,
+                                          label: 'Queue Number:',
+                                          value:
+                                              data.queue?.number?.toString() ??
+                                              'N/A',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 24),
+
+                                  // Additional information
+                                  Text(
+                                    'Please check your email for detailed confirmation',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+
+                                  const SizedBox(height: 32),
+
+                                  // Action button
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext);
+                                        Modular.to.navigate('/');
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: kPrimaryColor,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      child: const Text(
+                                        'Done',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-
-                            const SizedBox(height: 24),
-
-                            // Additional information
-                            Text(
-                              'Please check your email for detailed confirmation',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Action button
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  LoadingOverlay.hide();
-                                  Modular.to.navigate('/');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: kPrimaryColor,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: const Text(
-                                  'Done',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     );
                   }
                 } else {
