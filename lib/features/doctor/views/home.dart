@@ -233,6 +233,21 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 16),
+                        // show current queue as button
+                        if (state.doctor.currentQueue.isNotEmpty)
+                          Text("Current Queue"),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            Modular.to.pushNamed(
+                              '/doctor/diagnosis/${state.doctor.currentQueue["session"]["user_id"]}',
+                            );
+                          },
+                          child: Text(
+                            state.doctor.currentQueue["number"].toString(),
+                          ),
+                        ),
                       ],
                     ),
                   ),

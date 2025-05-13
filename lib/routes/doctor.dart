@@ -13,6 +13,6 @@ class DoctorModule extends Module {
         );
       },
     );
-    r.child('/diagnosis', child: (_) => const DoctorDiagnosisView());
+    r.child('/diagnosis/:id', child: (_) => const DoctorDiagnosisView());
   }
 }
