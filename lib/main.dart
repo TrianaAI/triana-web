@@ -6,7 +6,9 @@ import 'package:triana_web/features/front_counter/cubit/chat/chat_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/identity_form/identity_form_cubit.dart';
 import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
 import 'package:triana_web/routes/routes.dart';
+import 'package:triana_web/services/network.dart';
 import 'package:triana_web/services/services.dart';
+import 'package:triana_web/utils/pallete.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,13 +23,14 @@ class MainApp extends StatelessWidget {
     Modular.setInitialRoute('/front_counter');
 
     final bluetoothService = BluetoothService();
+    final networkService = NetworkService();
     // final serialService = SerialService();
     // final serialCubit = SerialCubit(serialService);
     final bluetoothCubit = BluetoothCubit(bluetoothService);
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => ChatCubit()),
+        BlocProvider(create: (context) => ChatCubit(networkService)),
         BlocProvider(
           create:
               (context) => IdentityFormCubit(bluetoothCubit: bluetoothCubit),
@@ -45,7 +48,7 @@ class MainApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFFF6F8FA),
           primaryColor: Colors.black,
           colorScheme: ColorScheme.light(
-            primary: Colors.black,
+            primary: kPrimaryColor,
             secondary: Colors.grey,
             onPrimary: Colors.white,
             onSecondary: Colors.black,

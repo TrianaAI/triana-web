@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:triana_web/features/front_counter/cubit/queue/queue_cubit.dart';
+import 'package:triana_web/features/front_counter/models/queue.dart';
 import 'package:triana_web/utils/utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class QueueNumber extends StatelessWidget {
-  const QueueNumber({super.key});
+class QueueNumber extends StatefulWidget {
+  final QueueData queueData;
+  const QueueNumber({super.key, required this.queueData});
 
+  @override
+  State<QueueNumber> createState() => _QueueNumberState();
+}
+
+class _QueueNumberState extends State<QueueNumber> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
