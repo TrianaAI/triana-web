@@ -267,26 +267,29 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         ),
                         const SizedBox(height: 16),
                         // show current queue as button
-                        if (state.doctor.currentQueue.isNotEmpty)
+                        if (state.doctor.currentQueue != null) ...[
                           Text("Current Queue"),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 32,
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 32,
+                              ),
+                            ),
+                            onPressed: () {
+                              Modular.to.pushNamed(
+                                '/doctor/diagnosis/${state.doctor.currentQueue?["session"]["user_id"]}',
+                              );
+                            },
+                            child: Text(
+                              state.doctor.currentQueue?["number"]
+                                      ?.toString() ??
+                                  '',
                             ),
                           ),
-                          onPressed: () {
-                            Modular.to.pushNamed(
-                              '/doctor/diagnosis/${state.doctor.currentQueue["session"]["user_id"]}',
-                            );
-                          },
-                          child: Text(
-                            state.doctor.currentQueue["number"].toString(),
-                          ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
