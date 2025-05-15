@@ -24,8 +24,11 @@ class BluetoothCubit extends Cubit<BluetoothState> {
   void subscribeToNotifications() {
     try {
       _bluetoothService.subscribeToNotifications((data) {
-        _messages.add(_Message(data, false));
-        emit(BluetoothDataReceived(List.from(_messages)));
+        if (data.contains('Triana')) {
+          // Filter messages containing 'Triana'
+          _messages.add(_Message(data, false));
+          emit(BluetoothDataReceived(List.from(_messages)));
+        }
       });
     } catch (e) {
       emit(BluetoothError(e.toString()));
