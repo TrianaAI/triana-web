@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:triana_web/features/doctor/cubit/doctor_diagnosis_cubit.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:triana_web/features/doctor/cubit/doctor_home_cubit.dart';
 
 class DoctorDiagnosisView extends StatefulWidget {
   const DoctorDiagnosisView({super.key});
@@ -14,7 +16,7 @@ class DoctorDiagnosisView extends StatefulWidget {
 class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
   final TextEditingController _diagnosisController = TextEditingController();
 
-  void _finishAppointment(String sessionId) async {
+  void _finishAppointment(String sessionId, String doctorId) async {
     final diagnosis = _diagnosisController.text;
     if (diagnosis.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -32,9 +34,33 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
         data: {"diagnosis": diagnosis},
       );
 
-      if (response.statusCode == 200) {
-        // go back to home page
-        Navigator.popUntil(context, (route) => route.isFirst);
+      if (response.statusCode == 200 && doctorId.isNotEmpty) {
+        // Show success pop-up
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Success"),
+              content: const Text("Appointment finished successfully."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Modular.to.pushNamedAndRemoveUntil(
+                      '/doctor/${Modular.args.params['doctorId']}', // Navigate back to the doctor page with the doctorId
+                      (route) => false, // Clear the navigation stack
+                    );
+                    Modular.get<DoctorHomeCubit>().fetchDoctor(
+                      Modular.args.params['doctorId'],
+                    ); // Refresh data on the doctor page
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
       } else {
         print(response.data);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -49,10 +75,6 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
       );
       return;
     }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Appointment finished")));
   }
 
   @override
@@ -386,6 +408,7 @@ class _DoctorDiagnosisViewState extends State<DoctorDiagnosisView> {
                                 .diagnosis
                                 .currentSession["queue"]["session_id"]
                                 .toString(),
+                            Modular.args.params['doctorId'],
                           );
                         },
                         child: const Text("Finish"),

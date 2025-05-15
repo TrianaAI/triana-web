@@ -8,7 +8,8 @@ class DoctorDiagnosisLoading extends DoctorDiagnosisState {}
 
 class DoctorDiagnosisLoaded extends DoctorDiagnosisState {
   final Diagnosis diagnosis;
-  DoctorDiagnosisLoaded(this.diagnosis);
+  final String doctorId;
+  DoctorDiagnosisLoaded(this.diagnosis, this.doctorId);
 }
 
 class DoctorDiagnosisError extends DoctorDiagnosisState {

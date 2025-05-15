@@ -9,7 +9,7 @@ class DoctorDiagnosisCubit extends Cubit<DoctorDiagnosisState> {
 
   final Dio _dio = Dio();
 
-  Future<void> fetchDiagnosis(String userId) async {
+  Future<void> fetchDiagnosis(String userId, String doctorId) async {
     emit(DoctorDiagnosisLoading());
     try {
       final response = await _dio.get(
@@ -18,7 +18,7 @@ class DoctorDiagnosisCubit extends Cubit<DoctorDiagnosisState> {
 
       final summary = Diagnosis.fromJson(response.data);
 
-      emit(DoctorDiagnosisLoaded(summary));
+      emit(DoctorDiagnosisLoaded(summary, doctorId));
     } catch (e) {
       emit(DoctorDiagnosisError('Failed to load doctor summary'));
     }

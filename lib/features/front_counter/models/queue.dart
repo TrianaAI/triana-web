@@ -11,21 +11,24 @@ class QueueResponse {
     required this.message,
     required this.nextAction,
     this.queue,
-    required this.reply,
+    this.reply,
     required this.sessionId,
   });
 
   factory QueueResponse.fromJson(Map<String, dynamic> json) {
     return QueueResponse(
       currentQueue:
-          json['current_queue'] != null
+          json['current_queue'] is Map<String, dynamic>
               ? QueueData.fromJson(json['current_queue'])
               : null,
-      message: json['message'],
-      nextAction: json['next_action'],
-      queue: json['queue'] != null ? QueueData.fromJson(json['queue']) : null,
-      reply: json['reply'],
-      sessionId: json['session_id'],
+      message: json['message'] ?? 'No message provided',
+      nextAction: json['next_action'] ?? 'NO_ACTION',
+      queue:
+          json['queue'] is Map<String, dynamic>
+              ? QueueData.fromJson(json['queue'])
+              : null,
+      reply: json['reply'] ?? 'No reply available',
+      sessionId: json['session_id'] ?? 'No session ID',
     );
   }
 
@@ -44,28 +47,34 @@ class QueueResponse {
 class QueueData {
   final String id;
   final String doctorId;
-  final Doctor doctor;
+  final Doctor? doctor;
   final String sessionId;
-  final SessionData sessionData;
+  final SessionData? sessionData;
   final int number;
 
   QueueData({
     required this.id,
     required this.doctorId,
-    required this.doctor,
+    this.doctor,
     required this.sessionId,
-    required this.sessionData,
+    this.sessionData,
     required this.number,
   });
 
   factory QueueData.fromJson(Map<String, dynamic> json) {
     return QueueData(
-      id: json['id'],
-      doctorId: json['doctor_id'],
-      doctor: Doctor.fromJson(json['doctor']),
-      sessionId: json['session_id'],
-      sessionData: SessionData.fromJson(json['_']),
-      number: json['number'],
+      id: json['id'] ?? '',
+      doctorId: json['doctor_id'] ?? '',
+      doctor:
+          json['doctor'] is Map<String, dynamic>
+              ? Doctor.fromJson(json['doctor'])
+              : null,
+      sessionId: json['session_id'] ?? '',
+      sessionData:
+          json['session'] is Map<String, dynamic>
+              ? SessionData.fromJson(json['session'])
+              : null,
+      number: json['number'] ?? 0,
     );
   }
 
@@ -73,9 +82,9 @@ class QueueData {
     return {
       'id': id,
       'doctor_id': doctorId,
-      'doctor': doctor.toJson(),
+      'doctor': doctor?.toJson(),
       'session_id': sessionId,
-      '_': sessionData.toJson(),
+      'session': sessionData?.toJson(),
       'number': number,
     };
   }
@@ -98,11 +107,11 @@ class Doctor {
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      specialty: json['specialty'],
-      roomNo: json['roomno'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? 'Unknown',
+      email: json['email'] ?? 'Unknown',
+      specialty: json['specialty'] ?? 'Unknown',
+      roomNo: json['roomno'] ?? 'Unknown',
     );
   }
 

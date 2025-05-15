@@ -14,11 +14,12 @@ class DoctorModule extends Module {
       },
     );
     r.child(
-      '/diagnosis/:id',
+      '/diagnosis/:id/:doctorId',
       child: (context) {
         final id = Modular.args.params['id'];
+        final doctorId = Modular.args.params['doctorId'];
         return BlocProvider(
-          create: (_) => DoctorDiagnosisCubit()..fetchDiagnosis(id!),
+          create: (_) => DoctorDiagnosisCubit()..fetchDiagnosis(id!, doctorId!),
           child: const DoctorDiagnosisView(),
         );
       },

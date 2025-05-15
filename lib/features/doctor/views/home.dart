@@ -14,6 +14,15 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
   late final String doctorId;
 
   @override
+  void initState() {
+    super.initState();
+    doctorId = Modular.args.params['doctorId'] ?? '';
+    BlocProvider.of<DoctorHomeCubit>(
+      context,
+    ).fetchDoctor(doctorId); // Fetch doctor data when the page is opened
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
@@ -91,6 +100,19 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Welcome to your home page.\nHere you can find all the information you need.",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Quote of the day",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         const Text(
@@ -278,16 +300,173 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                                 horizontal: 32,
                               ),
                             ),
-                            onPressed: () {
-                              Modular.to.pushNamed(
-                                '/doctor/diagnosis/${state.doctor.currentQueue?["session"]["user_id"]}',
+                            onPressed: () async {
+                              final doctorIdFromState =
+                                  state
+                                      .doctor
+                                      .doctor['id']; // Directly access doctor ID from state
+                              if (doctorIdFromState == null ||
+                                  doctorIdFromState.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Invalid doctor ID'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Show loading indicator
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
                               );
+
+                              // Fetch the latest data
+                              await BlocProvider.of<DoctorHomeCubit>(
+                                context,
+                              ).fetchDoctor(doctorIdFromState);
+                              final updatedState =
+                                  BlocProvider.of<DoctorHomeCubit>(
+                                    context,
+                                  ).state;
+                              Navigator.of(
+                                context,
+                              ).pop(); // Dismiss the loading indicator
+
+                              // Show dialog to process the current queue from the newest state
+                              if (updatedState is DoctorHomeLoaded) {
+                                final queueNumber =
+                                    updatedState.doctor.currentQueue?['number'];
+                                final userId =
+                                    updatedState
+                                        .doctor
+                                        .currentQueue?['session']['user_id'];
+                                if (queueNumber != null && userId != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'Process Current Queue',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Queue Number: $queueNumber',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Patient ID: $userId',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red,
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            onPressed:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 24,
+                                                  ),
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Modular.to.pushNamed(
+                                                '/doctor/diagnosis/$userId/$doctorIdFromState',
+                                              );
+                                            },
+                                            child: const Text('Proceed'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'No Current Queue',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        content: const Text(
+                                          'The doctor does not have a queue at the moment.',
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.blue,
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            onPressed:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Failed to fetch the latest state',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
-                            child: Text(
-                              state.doctor.currentQueue?["number"]
-                                      ?.toString() ??
-                                  '',
-                            ),
+                            child: const Text(
+                              "Check Queue",
+                            ), // Updated button text to "Check Queue"
                           ),
                         ],
                       ],

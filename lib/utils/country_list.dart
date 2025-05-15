@@ -1,5 +1,5 @@
 final List<String> countries = [
-  'Select Nationality',
+  'Indonesia',
   'Afghanistan',
   'Albania',
   'Algeria',
@@ -76,7 +76,6 @@ final List<String> countries = [
   'Hungary',
   'Iceland',
   'India',
-  'Indonesia',
   'Iran',
   'Iraq',
   'Ireland',

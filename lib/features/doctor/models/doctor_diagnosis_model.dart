@@ -11,9 +11,9 @@ class Diagnosis {
 
   factory Diagnosis.fromJson(Map<String, dynamic> json) {
     return Diagnosis(
-      user: json['user'],
-      currentSession: json['current_session'],
-      historySession: json['history_sessions'],
+      user: json['user'] ?? {},
+      currentSession: json['current_session'] ?? {},
+      historySession: json['history_sessions'] ?? [],
     );
   }
 }
