@@ -193,11 +193,11 @@ class IdentityFormCubit extends Cubit<IdentityFormState> {
       bluetoothCubit.sendMessage('start pulse');
 
       final bpm = await _bpmCompleter!.future.timeout(
-        const Duration(minutes: 3),
+        const Duration(seconds: 30),
         onTimeout:
             () =>
                 throw TimeoutException(
-                  'Pulse reading timed out after 3 minutes',
+                  'Pulse reading timed out after 30 seconds',
                 ),
       );
 
