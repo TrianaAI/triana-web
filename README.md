@@ -1,4 +1,4 @@
-# 🤖 Triana Front End
+# Triana
 
 ![Triana](docs/images/triana.png)
 
