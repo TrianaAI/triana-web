@@ -2,7 +2,8 @@
 
 ![Triana](docs/images/triana.png)
 
-**Triana** is the Flutter front-end application for our hackathon project — a smart, queue-based virtual assistant platform. The app serves two roles: one for the **Front Counter** (user interaction, queuing, and chatting), and another for the **Doctor** (diagnosis and patient session management).
+**Triana AI** is a smart Healthcare AIoT (Artificial Intelligence of Things) system that combines a computer and IoT sensors to collect patient data, assess health conditions through an AI chatbot, generate tailored reports for doctors and patients, and connect with hospital systems to **front-desk operations**, **streamline AI diagnosis**, and **specialist assignment**.
+
 
 You can visit out app in [here](https://triana.sportsnow.app) (https://triana.sportsnow.app)
 
@@ -50,8 +51,9 @@ flutter run
 
 * You're prompted to enter personal data:
 
-  * Nationality, weight, and height.
+  * Like Nationality, weight, and height.
   * Manual input for **heart rate** and **body temperature** if hardware is not available.
+
 * Once the form is submitted, you'll be asked to enter a **One-Time Password (OTP)** sent to your email.
 
 ![Identity Form](docs/images/identity_form.png)
@@ -63,6 +65,15 @@ flutter run
 * Enter the OTP from your email to proceed.
 * If the OTP is **correct**, you're redirected to the chat screen.
 
+![OTP Verification](docs/images/otp_verification.png)
+
+---
+
+### 📶 Bluetooth Config View -`/front_counter/config`
+* If you were to have the hardware, you can go to the **Bluetooth Config View** to connect to the hardware.
+
+![Bluetooth Config View](docs/images/bluetooth_config.png)
+
 ---
 
 ### 💬 Chat with Triana — `/front_counter/chat/:session`
@@ -72,6 +83,9 @@ flutter run
 
   * Performs a **preliminary diagnosis**.
   * Books an appointment with an available doctor.
+
+  ![Chat Screen](docs/images/chat_view.png)
+
 * You'll receive:
 
   * A **queue number**
@@ -79,16 +93,21 @@ flutter run
   * The **room assignment**
   * These details are also sent to your **email**.
 
-![Chat Screen](docs/images/chat_view.png)
+  ![Queue Number](docs/images/queue.png)
+
+  ![Queue Email](docs/images/queue_email.png)
 
 ---
 
 ### 🧑‍⚕️ Doctor Dashboard — `/doctor/:id`
 
 * Simulates a **doctor’s view** in the system.
-* If there's an active appointment, a button will appear showing the **current queue number**.
 
-![Doctor Dashboard](docs/images/doctor_dashboard.png)
+![Doctor Dashboard](docs/images/doctor_home.png)
+
+* If there's an active appointment, a button will appear at the bottom, clicking it will show the current queue/appointment.
+
+![Doctor Dashboard with Queue](docs/images/doctor_queue.png)
 
 ---
 
@@ -117,6 +136,6 @@ flutter run
 ---
 
 ## Doctor List
-Here are the available doctors in our database. [id] - [doctor name]:
-- f186afd5-a175-420e-b06e-d35a713d3616 - Dr. Udin
-- edd248b7-75d3-4af2-a954-183970124e9d - Dr. Jane Doe
+Here are the available doctors in our database. [id] - [doctor name] - [specialty] - [room]:
+- f186afd5-a175-420e-b06e-d35a713d3616 - Dr. Udin - General Practitioner - A2
+- edd248b7-75d3-4af2-a954-183970124e9d - Dr. Jane Doe - Cardiologist - A1
